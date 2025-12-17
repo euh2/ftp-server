@@ -1,7 +1,7 @@
 FROM alpine:3.19
 
-# Install vsftpd
-RUN apk add --no-cache vsftpd
+# Install vsftpd and tini
+RUN apk add --no-cache vsftpd tini
 
 # Create anonymous user home directory
 RUN mkdir -p /home/anonymous && \
@@ -13,6 +13,9 @@ COPY vsftpd.conf /etc/vsftpd/vsftpd.conf
 
 # Expose FTP port
 EXPOSE 21
+
+# Use tini as init to properly handle signals
+ENTRYPOINT ["/sbin/tini", "--"]
 
 # Run vsftpd in the foreground
 CMD ["vsftpd", "/etc/vsftpd/vsftpd.conf"]
